@@ -63,7 +63,7 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
     private ProxyThreadPoolExecutor proxyThreadPoolExecutor;
 
     //缓存的监听
-    private ProxyCacheListener cacheListener;
+    private List<ProxyCacheListener> cacheListeners = new ArrayList<>();
 
 
     //构造器
@@ -576,8 +576,12 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                         }
                     }
                     //监听
-                    if (cacheListener != null) {
-                        cacheListener.cachedProgress((int) (downloaded * 1.0 / segments.size() * 100));
+                    synchronized (cacheListeners) {
+                        int progress = (int) (downloaded * 1.0 / segments.size() * 100);
+                        //监听
+                        for (int s = 0; s < cacheListeners.size(); s++) {
+                            cacheListeners.get(s).cachedProgress(progress);
+                        }
                     }
                 }
 
@@ -605,8 +609,13 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                         //完成
                         ToolSDcard.writeObjectSdcard(getUrlDicotry(), uuid + "done.data", downloadDoneModel);
                         //监听
-                        if (cacheListener != null) {
-                            cacheListener.cachedSuccess();
+
+                        synchronized (cacheListeners) {
+
+                            for (int s = 0; s < cacheListeners.size(); s++) {
+                                cacheListeners.get(s).cachedSuccess();
+                            }
+                            cacheListeners.clear();
                         }
                     }
                     //修改
@@ -644,6 +653,17 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
     }
 
 
+    //取消所有的监听
+    private void cancelAllListener() {
+        //缓存已经停止
+        synchronized (cacheListeners) {
+            for (int s = 0; s < cacheListeners.size(); s++) {
+                cacheListeners.get(s).cachedStoped();
+            }
+            cacheListeners.clear();
+        }
+    }
+
     //获取真实的URL
     @Override
     public String getUrl() {
@@ -678,8 +698,10 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
             isStoped = true;
             //回调
             removeAction(AsyncHttpGet.METHOD, "/" + uuid);
-            //取消所哟普的下载线程
+            //取消所有的下载线程
             cancelAllDownloading();
+            //取消所有的监听
+            cancelAllListener();
             //停止
             stop();
         }
@@ -704,8 +726,10 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
             return;
         }
 
-        //设置当前的监听
-        cacheListener = listener;
+        //添加监听
+        synchronized (cacheListeners) {
+            cacheListeners.add(listener);
+        }
 
         //如果当前的所有的线程为零
         if (proxyThreadPoolExecutor == null ||

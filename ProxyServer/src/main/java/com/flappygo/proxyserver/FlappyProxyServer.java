@@ -218,18 +218,23 @@ public class FlappyProxyServer {
         String uuid = ServerIDManager.getInstance(context).generateUrlID(url);
 
         //获取UUID的缓存地址
-        String path = ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
+        final String path = ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
 
         //移除
         ServerIDManager.getInstance(context).removeUrl(url);
 
-        //返回
-        try {
-            ToolDirs.deleteDirFiles(path);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        //多线程清理数据
+        new Thread() {
+            public void run() {
+                try {
+                    ToolDirs.deleteDirFiles(path);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }.start();
+
+        return true;
     }
 
     //清理所有的

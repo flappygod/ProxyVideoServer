@@ -8,4 +8,7 @@ public interface ProxyCacheListener {
     //缓存全部完成
     void cachedSuccess();
 
+    //监听
+    void cachedStoped();
+
 }
