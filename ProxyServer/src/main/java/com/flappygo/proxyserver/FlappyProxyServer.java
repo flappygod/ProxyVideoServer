@@ -69,6 +69,7 @@ public class FlappyProxyServer {
             return url;
         }
 
+        //检查SD卡是否满了，如果满了就清理缓存
         checkSDCard();
 
         //获取这个URL所对应的UUID
