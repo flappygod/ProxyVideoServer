@@ -467,29 +467,23 @@ public class DownLoadActor {
                         randonFile.write(buffer, 0, readedLen);
                         //新写入了len个字节
                         offset = offset + readedLen;
-
                     } else {
-                        //如果有长度限制，但是还没有达到终点
-                        if (offset + readedLen < rangeStart + rangeLength) {
-                            //写入数据
-                            randonFile.write(buffer, 0, readedLen);
-                            //新写入了len个字节
-                            offset = offset + readedLen;
-                        }
-                        //如果有长度限制，而且已经到达了终点
-                        else {
-                            //只写入到终点那么大
-                            if ((rangeStart + rangeLength - offset) != 0) {
-                                //防止为零的时候写入的数据有误
-                                randonFile.write(buffer, 0, (int) (rangeStart + rangeLength - offset));
-                                //已经达到终点
-                                offset = rangeStart + rangeLength;
-                            }
+                        //跳出
+                        if (offset == rangeStart + rangeLength){
                             //我们认为已经达到终点了
                             readedLen = -1;
                             //然后break
                             break;
                         }
+                        //如果读取的数据已经超出我们的限制，那么我们只写入我们需要的长度
+                        if (offset + readedLen >= rangeStart + rangeLength) {
+                            //限制长度为这么多
+                            readedLen = (int) (rangeStart + rangeLength - offset);
+                        }
+                        //写入数据
+                        randonFile.write(buffer, 0, readedLen);
+                        //新写入了len个字节
+                        offset = offset + readedLen;
                     }
                     //下载中
                     downLoadState = DOWNLOADING;

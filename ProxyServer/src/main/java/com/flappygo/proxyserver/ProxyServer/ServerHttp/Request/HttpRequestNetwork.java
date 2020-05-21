@@ -127,6 +127,11 @@ public class HttpRequestNetwork {
                     break;
                 }
 
+                //跳出
+                if (rangeNower == rangeStart + rangeLength){
+                    break;
+                }
+
                 //如果读取的数据已经超出我们的限制，那么我们只写入我们需要的长度
                 if (rangeNower + len >= rangeStart + rangeLength) {
                     //限制长度为这么多

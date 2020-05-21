@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         //设置
         holder.setKeepScreenOn(true);
         //添加回调
-        //holder.addCallback(this);
+        holder.addCallback(this);
 
 //        FlappyProxyServer.getInstance(getApplicationContext()).proxyCacheStart(url, new ProxyCacheListener() {
 //            @Override
@@ -133,7 +133,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         //跳转
         Handler handler = new Handler() {
             public void handleMessage(Message message) {
-                mediaPlayer.setPosition(0.5f);
+                mediaPlayer.setPosition(0.8f);
             }
         };
         handler.sendEmptyMessageDelayed(1, 20000);
