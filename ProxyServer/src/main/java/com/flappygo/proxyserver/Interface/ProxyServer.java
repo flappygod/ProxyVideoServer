@@ -29,4 +29,7 @@ public interface ProxyServer {
 
     //开始缓存数据
     void startCache(ProxyCacheListener listener);
+
+    //停止缓存
+    void stopCache();
 }

@@ -518,124 +518,127 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                            long start,
                            long end,
                            AsyncHttpServerResponse response) {
-        //同步
-        synchronized (this) {
 
-            //关闭当前的线程池
-            shutDownNow();
+        //当前threadPool
+        ProxyThreadPoolExecutor threadPool = new ProxyThreadPoolExecutor(ServerConfig.THREAD_POOL_SIZE);
 
-            //当前threadPool
-            ProxyThreadPoolExecutor threadPool = new ProxyThreadPoolExecutor(ServerConfig.THREAD_POOL_SIZE);
+        //获取所有的播放列表
+        List<HttpSegmentModel> paths = ToolString.getHttpSegments(urlPath, contentLength, start, end);
 
-            //获取所有的播放列表
-            List<HttpSegmentModel> paths = ToolString.getHttpSegments(urlPath, contentLength, start, end);
+        //列表
+        final List<ProxyServerHttpSegment> childList = new ArrayList<>();
 
-            //列表
-            final List<ProxyServerHttpSegment> childList = new ArrayList<>();
+        //判断
+        for (int s = 0; s < paths.size(); s++) {
+            //实际下载文件的地址
+            String trueUrlPath = paths.get(s).getUrl();
+            //真实的保存文件的地址
+            String trueDictionary = getUrlDicotry();
+            //创建下载器
+            DownLoadActor actor = new DownLoadActor(headers,
+                    trueUrlPath,
+                    trueDictionary,
+                    paths.get(s).getSegmentName(),
+                    paths.get(s).getStart(),
+                    paths.get(s).getLength());
+            //设置下载器的tag,方便我们确认下载排序的序号
+            actor.actorTag = s;
+            //开启线程池
+            ProxyDownloadThread thread = new ProxyDownloadThread(actor);
+            //加入到线程池中执行
+            threadPool.execute(thread);
+            //创建
+            ProxyServerHttpSegment requestCallback = new ProxyServerHttpSegment(this, headers, actor, response);
+            //添加子请求
+            childList.add(requestCallback);
+        }
+        //调用代理
+        ProxyServerHttpSegProxer procter = new ProxyServerHttpSegProxer(this, childList, response, start);
 
-            //判断
-            for (int s = 0; s < paths.size(); s++) {
-                //实际下载文件的地址
-                String trueUrlPath = paths.get(s).getUrl();
-                //真实的保存文件的地址
-                String trueDictionary = getUrlDicotry();
-                //创建下载器
-                DownLoadActor actor = new DownLoadActor(headers,
-                        trueUrlPath,
-                        trueDictionary,
-                        paths.get(s).getSegmentName(),
-                        paths.get(s).getStart(),
-                        paths.get(s).getLength());
-                //设置下载器的tag,方便我们确认下载排序的序号
-                actor.actorTag = s;
-                //开启线程池
-                ProxyDownloadThread thread = new ProxyDownloadThread(actor);
-                //加入到线程池中执行
-                threadPool.execute(thread);
-                //创建
-                ProxyServerHttpSegment requestCallback = new ProxyServerHttpSegment(this, headers, actor, response);
-                //添加子请求
-                childList.add(requestCallback);
-            }
-            //调用代理
-            ProxyServerHttpSegProxer procter = new ProxyServerHttpSegProxer(this, childList, response, start);
+        //进行代理
+        procter.proxy();
 
-            //进行代理
-            procter.proxy();
-
-            //设置线程池的监听
-            threadPool.setProxyThreadPoolListener(new ProxyThreadPoolListener() {
-                @Override
-                public void threadDone(int remain, String threadID) {
-                    List<ProxyServerHttpSegment> segments = childServerList;
-                    //已经下载的数量
-                    int downloaded = 0;
-                    //当前是否下载
-                    for (int s = 0; s < segments.size(); s++) {
-                        if (segments.get(s).getDownLoadActor().isDownloaded()) {
-                            downloaded++;
-                        }
+        //设置线程池的监听
+        threadPool.setProxyThreadPoolListener(new ProxyThreadPoolListener() {
+            @Override
+            public void threadDone(int remain, String threadID) {
+                List<ProxyServerHttpSegment> segments = childServerList;
+                //已经下载的数量
+                int downloaded = 0;
+                //当前是否下载
+                for (int s = 0; s < segments.size(); s++) {
+                    if (segments.get(s).getDownLoadActor().isDownloaded()) {
+                        downloaded++;
                     }
+                }
+                //监听
+                synchronized (cacheListeners) {
+                    int progress = (int) (downloaded * 1.0 / segments.size() * 100);
+                    //监听
+                    for (int s = 0; s < cacheListeners.size(); s++) {
+                        cacheListeners.get(s).cachedProgress(progress);
+                    }
+                }
+            }
+
+            @Override
+            public void threadNomore() {
+                List<ProxyServerHttpSegment> segments = childServerList;
+                //已经下载的数量
+                int downloaded = 0;
+                //当前是否下载
+                for (int s = 0; s < segments.size(); s++) {
+                    if (segments.get(s).getDownLoadActor().isDownloaded()) {
+                        downloaded++;
+                    }
+                }
+                //下载
+                if (downloaded == segments.size()) {
+                    //写入完成的数据
+                    DownloadDoneModel downloadDoneModel = new DownloadDoneModel();
+                    //设置url地址
+                    downloadDoneModel.setUrl(urlPath);
+                    //设置uuid
+                    downloadDoneModel.setUuid(uuid);
+                    //缓存完成
+                    downloadDoneModel.setTotalSegment(segments.size());
+                    //完成
+                    ToolSDcard.writeObjectSdcard(getUrlDicotry(), uuid + "done.data", downloadDoneModel);
                     //监听
                     synchronized (cacheListeners) {
-                        int progress = (int) (downloaded * 1.0 / segments.size() * 100);
-                        //监听
                         for (int s = 0; s < cacheListeners.size(); s++) {
-                            cacheListeners.get(s).cachedProgress(progress);
+                            cacheListeners.get(s).cachedSuccess();
                         }
+                        cacheListeners.clear();
                     }
                 }
-
-                @Override
-                public void threadNomore() {
-                    List<ProxyServerHttpSegment> segments = childServerList;
-                    //已经下载的数量
-                    int downloaded = 0;
-                    //当前是否下载
-                    for (int s = 0; s < segments.size(); s++) {
-                        if (segments.get(s).getDownLoadActor().isDownloaded()) {
-                            downloaded++;
-                        }
-                    }
-                    //下载
-                    if (downloaded == segments.size()) {
-                        //写入完成的数据
-                        DownloadDoneModel downloadDoneModel = new DownloadDoneModel();
-                        //设置url地址
-                        downloadDoneModel.setUrl(urlPath);
-                        //设置uuid
-                        downloadDoneModel.setUuid(uuid);
-                        //缓存完成
-                        downloadDoneModel.setTotalSegment(segments.size());
-                        //完成
-                        ToolSDcard.writeObjectSdcard(getUrlDicotry(), uuid + "done.data", downloadDoneModel);
-                        //监听
-                        synchronized (cacheListeners) {
-                            for (int s = 0; s < cacheListeners.size(); s++) {
-                                cacheListeners.get(s).cachedSuccess();
-                            }
-                            cacheListeners.clear();
-                        }
-                    }
-                    //修改
-                    else {
-                        //还没有下载完成,而且有网络的情况下
-                        if (ToolIntenet.isNetworkAvailable(context)) {
-                            //遍历
-                            for (int s = 0; s < segments.size(); s++) {
-                                //没有下载完成的继续下载
-                                if (!segments.get(s).getDownLoadActor().isDownloaded()) {
-                                    //开启线程池
-                                    ProxyDownloadThread thread = new ProxyDownloadThread(segments.get(s).getDownLoadActor());
-                                    //加入到线程池中执行
-                                    proxyThreadPoolExecutor.execute(thread);
-                                }
+                //修改
+                else {
+                    //还没有下载完成,而且有网络的情况下
+                    if (ToolIntenet.isNetworkAvailable(context)) {
+                        //遍历
+                        for (int s = 0; s < segments.size(); s++) {
+                            //没有下载完成的继续下载
+                            if (!segments.get(s).getDownLoadActor().isDownloaded()) {
+                                //开启线程池
+                                ProxyDownloadThread thread = new ProxyDownloadThread(segments.get(s).getDownLoadActor());
+                                //加入到线程池中执行
+                                proxyThreadPoolExecutor.execute(thread);
                             }
                         }
-
+                    } else {
+                        cancelAllListener();
                     }
+
                 }
-            });
+            }
+        });
+
+        //关闭当前的线程池
+        cancelAllDownloading();
+
+        //同步
+        synchronized (this) {
 
             //赋值
             childServerList = childList;
@@ -742,6 +745,14 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
         }
     }
 
+    @Override
+    public void stopCache() {
+        //取消下载线程
+        cancelAllDownloading();
+        //取消所有监听
+        cancelAllListener();
+    }
+
 
     //开启线程以便于缓存当前文件
     private void openThreadToStartCache() {
@@ -779,7 +790,7 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                 segmentPostion = postion;
                 return;
             }
-            shutDownNow();
+            cancelAllDownloading();
             //设置当前的segmentPostion
             segmentPostion = postion;
             //重新创建线程池
@@ -792,14 +803,6 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                 }
             }
             proxyThreadPoolExecutor = memPool;
-        }
-    }
-
-    //关闭当前的线程池
-    private void shutDownNow() {
-        //停止当前的线程池
-        if (proxyThreadPoolExecutor != null) {
-            proxyThreadPoolExecutor.shutdownNow();
         }
     }
 

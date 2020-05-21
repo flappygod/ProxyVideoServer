@@ -437,12 +437,15 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
                                     proxyThreadPoolExecutor.execute(thread);
                                 }
                             }
+                        } else {
+                            cancelAllListener();
                         }
                     }
                 }
             });
         }
 
+        cancelAllDownloading();
 
         synchronized (this) {
             //赋值
@@ -552,6 +555,15 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
         }
     }
 
+
+    @Override
+    public void stopCache() {
+        //取消下载线程
+        cancelAllDownloading();
+        //取消所有监听
+        cancelAllListener();
+    }
+
     //开启线程以便于缓存当前文件
     private void openThreadToStartCache() {
         //开启线程，优先执行
@@ -590,7 +602,7 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
                 return;
             }
             //停止当前的线程池
-            shutDownNow();
+            cancelAllDownloading();
             //设置当前的segmentPostion
             segmentPostion = postion;
             //重新创建线程池
@@ -607,12 +619,5 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
 
     }
 
-    //关闭当前的线程池
-    private void shutDownNow() {
-        //停止当前的线程池
-        if (proxyThreadPoolExecutor != null) {
-            proxyThreadPoolExecutor.shutdownNow();
-        }
-    }
 
 }

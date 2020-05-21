@@ -148,8 +148,8 @@ public class FlappyProxyServer {
 
 
     //缓存
-    public String proxyCache(String url,
-                             ProxyCacheListener listener) {
+    public String proxyCacheStart(String url,
+                                  ProxyCacheListener listener) {
         //判空处理
         if (url == null) {
             return "";
@@ -200,6 +200,28 @@ public class FlappyProxyServer {
             //返回的实际请求地址
             return getLocalServerUrl() + uuid;
         }
+    }
+
+    //停止缓存
+    public boolean proxyCacheStop(String url) {
+        //地址
+        synchronized (proxyServer) {
+            Iterator iterator = proxyServer.keySet().iterator();
+            while (iterator.hasNext()) {
+                //遍历
+                String key = (String) iterator.next();
+                //获取代理服务
+                ProxyServer server = proxyServer.get(key);
+                //如果是针对这个地址的代理服务
+                if (server.getUrl().equals(url)) {
+                    //停止
+                    server.stopCache();
+                    //返回成功
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //清理当前的Proxy
