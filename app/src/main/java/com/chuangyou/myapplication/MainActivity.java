@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     //请求MP4
     //private String url = "http://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4";
 
-    private String url = "http://hk1.nspace.online/movie/fiction/na/alita.mp4";
+    //private String url = "http://hk1.nspace.online/movie/fiction/na/alita.mp4";
 
     //private String url = "http://hk1.nspace.online/movie/fiction/na/alita.mp4";
 
@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     //private String url = "https://cn7.qxreader.com/hls/20200122/59353b55ae2b1f8aba0f26b5b7c7977f/1579693880/index.m3u8";
 
-    //private String url = "https://baidu.com-l-baidu.com/20190813/14599_f58526fd/1000k/hls/index.m3u8";
+    private String url = "https://baidu.com-l-baidu.com/20190813/14599_f58526fd/1000k/hls/index.m3u8";
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -54,9 +54,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         //设置
         holder.setKeepScreenOn(true);
         //添加回调
-        holder.addCallback(this);
+        //holder.addCallback(this);
 
-//        FlappyProxyServer.getInstance(getApplicationContext()).proxyCache(url, new ProxyCacheListener() {
+//        FlappyProxyServer.getInstance(getApplicationContext()).proxyCacheStart(url, new ProxyCacheListener() {
 //            @Override
 //            public void cachedProgress(int progress) {
 //
@@ -68,8 +68,21 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 //
 //                System.out.println("SUCCESSS");
 //            }
+//
+//            @Override
+//            public void cachedStoped() {
+//
+//                System.out.println("STOPED");
+//            }
 //        });
 
+
+//        Handler handler = new Handler() {
+//            public void handleMessage(Message message) {
+//                FlappyProxyServer.getInstance(getApplicationContext()).proxyStop(url);
+//            }
+//        };
+//        handler.sendEmptyMessageDelayed(1, 20000);
     }
 
     @Override
