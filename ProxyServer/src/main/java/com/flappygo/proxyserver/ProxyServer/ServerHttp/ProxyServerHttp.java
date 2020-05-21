@@ -14,6 +14,7 @@ import com.flappygo.proxyserver.Interface.ProxyServer;
 import com.flappygo.proxyserver.ProxyServer.Models.DownloadDoneModel;
 import com.flappygo.proxyserver.ProxyServer.ServerHttp.Models.HttpSegmentModel;
 import com.flappygo.proxyserver.ServerPath.ServerPathManager;
+import com.flappygo.proxyserver.Tools.ToolIntenet;
 import com.flappygo.proxyserver.Tools.ToolSDcard;
 import com.flappygo.proxyserver.Tools.ToolString;
 import com.koushikdutta.async.callback.CompletedCallback;
@@ -609,9 +610,7 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                         //完成
                         ToolSDcard.writeObjectSdcard(getUrlDicotry(), uuid + "done.data", downloadDoneModel);
                         //监听
-
                         synchronized (cacheListeners) {
-
                             for (int s = 0; s < cacheListeners.size(); s++) {
                                 cacheListeners.get(s).cachedSuccess();
                             }
@@ -620,15 +619,20 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                     }
                     //修改
                     else {
-                        //还没有下载完成
-                        for (int s = 0; s < segments.size(); s++) {
-                            if (!segments.get(s).getDownLoadActor().isDownloaded()) {
-                                //开启线程池
-                                ProxyDownloadThread thread = new ProxyDownloadThread(segments.get(s).getDownLoadActor());
-                                //加入到线程池中执行
-                                proxyThreadPoolExecutor.execute(thread);
+                        //还没有下载完成,而且有网络的情况下
+                        if (ToolIntenet.isNetworkAvailable(context)) {
+                            //遍历
+                            for (int s = 0; s < segments.size(); s++) {
+                                //没有下载完成的继续下载
+                                if (!segments.get(s).getDownLoadActor().isDownloaded()) {
+                                    //开启线程池
+                                    ProxyDownloadThread thread = new ProxyDownloadThread(segments.get(s).getDownLoadActor());
+                                    //加入到线程池中执行
+                                    proxyThreadPoolExecutor.execute(thread);
+                                }
                             }
                         }
+
                     }
                 }
             });
