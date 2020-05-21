@@ -116,6 +116,11 @@ public class FlappyProxyServer {
         }
     }
 
+    //获取缓存的路径
+    public String getCacheDictionary() {
+        return ServerPathManager.getInstance(context).getDefaultDirPath();
+    }
+
     //停止代理
     public boolean proxyStop(String url) {
         //地址
