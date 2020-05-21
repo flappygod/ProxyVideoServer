@@ -113,7 +113,7 @@ public class FlappyProxyServer {
         //如果小于5个G
         if (size < 1024 * 5) {
             //清理缓存文件
-            cleanAll(context);
+            cleanAll();
         }
     }
 
@@ -203,7 +203,7 @@ public class FlappyProxyServer {
     }
 
     //清理当前的Proxy
-    public boolean cleanProxy(Context context, String url) {
+    public boolean cleanProxy(String url) {
         //判空处理
         if (url == null) {
             return false;
@@ -233,10 +233,10 @@ public class FlappyProxyServer {
     }
 
     //清理所有的
-    public boolean cleanAll(Context context) {
+    public boolean cleanAll() {
         List<String> path = ServerIDManager.getInstance(context).getUrls();
         for (int s = 0; s < path.size(); s++) {
-            boolean flag = cleanProxy(context, path.get(s));
+            boolean flag = cleanProxy(path.get(s));
             if (flag == false) {
                 return false;
             }
