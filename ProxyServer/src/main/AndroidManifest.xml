@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.flappygo.proxyserver">
+
+    <!-- 读取缓存 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>
