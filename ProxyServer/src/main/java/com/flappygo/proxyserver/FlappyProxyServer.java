@@ -245,7 +245,7 @@ public class FlappyProxyServer {
     }
 
     //获取被代理过的url
-    public List<String> getProxyUrls(Context context) {
+    public List<String> getProxyUrls() {
         List<String> path = ServerIDManager.getInstance(context).getUrls();
         return path;
     }
