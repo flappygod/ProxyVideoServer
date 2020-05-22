@@ -119,9 +119,6 @@ public class ProxyServerM3u8 implements ProxyServer {
                     }
                 }
 
-                //从零开始
-                requestMaps.put("Range", "bytes=" + 0 + "-");
-
                 //设置关闭的监听
                 response.setClosedCallback(new CompletedCallback() {
                     @Override
@@ -152,7 +149,7 @@ public class ProxyServerM3u8 implements ProxyServer {
             //返回字符串
             String file = ToolSDcard.readStringSdcard(getUrlDicotry(), getM3u8FileName());
             //请求成功
-            response.code(HttpConfig.NET_SUCCESS_PART);
+            response.code(HttpConfig.NET_SUCCESS);
             //所有的都返回
             response.getHeaders().addAll(map);
             //所有的paths进入代理流程
