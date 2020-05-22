@@ -34,13 +34,5 @@ public interface ProxyServer {
     //停止缓存
     void stopCache();
 
-    //增加引用
-    void addQuote(String unique);
-
-    //移除引用
-    void removeQuote(String unique);
-
-    //当前是否已经不存在引用了
-    boolean isNoQuote();
 
 }

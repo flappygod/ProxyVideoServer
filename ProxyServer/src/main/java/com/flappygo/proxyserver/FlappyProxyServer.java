@@ -80,7 +80,6 @@ public class FlappyProxyServer {
 
             //如果当前已经存在服务对齐镜像
             if (runningServer != null) {
-                runningServer.addQuote(unique);
                 return getLocalServerUrl() + uuid;
             }
 
@@ -89,14 +88,14 @@ public class FlappyProxyServer {
                 //服务地址
                 ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), uuid, url);
                 //添加
-                addServer(uuid, unique, server);
+                addServer(uuid, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             } else {
                 //服务地址
                 ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), uuid, url);
                 //添加
-                addServer(uuid, unique, server);
+                addServer(uuid, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             }
@@ -154,7 +153,7 @@ public class FlappyProxyServer {
                 //开始缓存
                 server.startCache(listener);
                 //添加
-                addServer(uuid, null, server);
+                addServer(uuid, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             } else {
@@ -163,7 +162,7 @@ public class FlappyProxyServer {
                 //开始缓存
                 server.startCache(listener);
                 //添加
-                addServer(uuid, null, server);
+                addServer(uuid, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             }
@@ -252,10 +251,7 @@ public class FlappyProxyServer {
     }
 
     //添加server
-    private void addServer(String key, String unique, ProxyServer server) {
-        if (unique != null) {
-            server.addQuote(unique);
-        }
+    private void addServer(String key, ProxyServer server) {
         proxyServer.put(key, server);
     }
 
@@ -271,19 +267,12 @@ public class FlappyProxyServer {
             ProxyServer server = proxyServer.get(key);
             //如果相等
             if (server.getUrl().equals(url)) {
+                //停止
+                server.stopServer();
                 //移除
-                if (unique != null) {
-                    server.removeQuote(unique);
-                }
-                //如果已经没有了引用
-                if (server.isNoQuote()) {
-                    //停止
-                    server.stopServer();
-                    //移除
-                    proxyServer.remove(key);
-                    //返回成功
-                    return true;
-                }
+                proxyServer.remove(key);
+                //返回成功
+                return true;
             }
         }
         return false;

@@ -41,6 +41,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     private String url = "https://baidu.com-l-baidu.com/20190813/14599_f58526fd/1000k/hls/index.m3u8";
 
+    private String unique;
+
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
@@ -90,6 +92,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
         reelaseMedia();
 
+        unique = System.currentTimeMillis() + "";
         ArrayList<String> options = new ArrayList<>();
         //设置音频输出模块
         options.add("--aout=opensles");
@@ -114,7 +117,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         //设置
         LibVLC libVLC = new LibVLC(getBaseContext(), options);
         //对这个地址进行代理
-        String trueUrl = FlappyProxyServer.getInstance(getApplicationContext()).proxyStart(url, null);
+        String trueUrl = FlappyProxyServer.getInstance(getApplicationContext()).proxyStart(url, unique);
         //创建media
         final Media media = new Media(libVLC, Uri.parse(trueUrl));
         //创建player
@@ -166,7 +169,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             //释放
             mediaPlayer.releaseForce();
             //取消
-            FlappyProxyServer.getInstance(getApplicationContext()).proxyStop(url, null);
+            FlappyProxyServer.getInstance(getApplicationContext()).proxyStop(url, unique);
             //停止
             mediaPlayer = null;
         }
