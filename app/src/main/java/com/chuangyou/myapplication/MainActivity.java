@@ -114,7 +114,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         //设置
         LibVLC libVLC = new LibVLC(getBaseContext(), options);
         //对这个地址进行代理
-        String trueUrl = FlappyProxyServer.getInstance(getApplicationContext()).proxyStart(url);
+        String trueUrl = FlappyProxyServer.getInstance(getApplicationContext()).proxyStart(url,null);
         //创建media
         final Media media = new Media(libVLC, Uri.parse(trueUrl));
         //创建player
@@ -133,7 +133,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         //跳转
         Handler handler = new Handler() {
             public void handleMessage(Message message) {
-                mediaPlayer.setPosition(0.8f);
+                //mediaPlayer.setPosition(0.8f);
             }
         };
         handler.sendEmptyMessageDelayed(1, 20000);
@@ -166,7 +166,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             //释放
             mediaPlayer.releaseForce();
             //取消
-            FlappyProxyServer.getInstance(getApplicationContext()).proxyStop(url);
+            FlappyProxyServer.getInstance(getApplicationContext()).proxyStop(url,null);
             //停止
             mediaPlayer = null;
         }
