@@ -321,6 +321,8 @@ public class ProxyServerM3u8 implements ProxyServer {
                 String trueAction = ToolString.generateActionPath(paths.get(s),actionID);
                 //真实的保存文件的地址
                 String trueDictionary = getUrlDicotry();
+                //替换掉实际地址
+                retStr = retStr.replace(paths.get(s), trueAction);
                 //创建下载器
                 DownLoadActor actor = new DownLoadActor(requestMaps, trueUrlPath, trueDictionary);
                 //设置下载器的tag
@@ -345,7 +347,7 @@ public class ProxyServerM3u8 implements ProxyServer {
                 //真实的保存文件的地址
                 String trueDictionary = getUrlDicotry();
                 //替换掉实际地址
-                retStr = retStr.replace(trueUrlPath, trueAction);
+                retStr = retStr.replace(paths.get(s), trueAction);
                 //创建下载器
                 DownLoadActor actor = new DownLoadActor(requestMaps, trueUrlPath, trueDictionary);
                 //设置下载器的tag,方便我们确认下载排序的序号
