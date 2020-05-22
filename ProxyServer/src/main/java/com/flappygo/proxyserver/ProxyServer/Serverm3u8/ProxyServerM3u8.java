@@ -147,13 +147,13 @@ public class ProxyServerM3u8 implements ProxyServer {
             //返回对应的header文件
             HashMap map = (HashMap) ToolSDcard.getObjectSdcard(getUrlDicotry(), getM3u8HeadName());
             //返回字符串
-            String file = ToolSDcard.readStringSdcard(getUrlDicotry(), getM3u8FileName());
+            String responseStr = ToolSDcard.readStringSdcard(getUrlDicotry(), getM3u8FileName());
             //请求成功
             response.code(HttpConfig.NET_SUCCESS_PART);
+            //所有的paths进入代理流程
+            String responseProxStr = initPaths(requestMaps, responseStr);
             //所有的都返回
             response.getHeaders().addAll(map);
-            //所有的paths进入代理流程
-            String responseProxStr = initPaths(requestMaps, file);
             //返回长度
             byte[] bytes = responseProxStr.getBytes();
             //写入数据
@@ -225,8 +225,9 @@ public class ProxyServerM3u8 implements ProxyServer {
                 //写入header
                 ToolSDcard.writeObjectSdcard(getUrlDicotry(), getM3u8HeadName(), responesMaps);
             }
+
             //所有的paths进入代理流程
-            String responseProxStr = initPaths(requestMaps, responseStr);
+            responseStr = initPaths(requestMaps, responseStr);
 
             //获取bytes
             byte[] bytes = responseStr.getBytes();
@@ -245,7 +246,7 @@ public class ProxyServerM3u8 implements ProxyServer {
             response.getHeaders().addAll(responesMaps);
 
             //写入数据
-            ByteBufferList bufferList = new ByteBufferList(responseProxStr.getBytes());
+            ByteBufferList bufferList = new ByteBufferList(responseStr.getBytes());
             //写入进去
             response.write(bufferList);
             //完成
