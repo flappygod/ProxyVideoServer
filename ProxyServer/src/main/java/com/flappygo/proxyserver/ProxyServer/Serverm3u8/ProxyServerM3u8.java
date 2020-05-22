@@ -152,7 +152,7 @@ public class ProxyServerM3u8 implements ProxyServer {
             //返回字符串
             String file = ToolSDcard.readStringSdcard(getUrlDicotry(), getM3u8FileName());
             //请求成功
-            response.code(HttpConfig.NET_SUCCESS);
+            response.code(HttpConfig.NET_SUCCESS_PART);
             //所有的都返回
             response.getHeaders().addAll(map);
             //所有的paths进入代理流程
