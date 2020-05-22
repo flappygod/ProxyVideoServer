@@ -75,7 +75,9 @@ public class FlappyProxyServer {
             //新增被代理的URL
             ServerIDManager.getInstance(context).addUrl(url);
 
+            //获取当前正在运行的服务
             ProxyServer runningServer = getRunningServer(url);
+
             //如果当前已经存在服务对齐镜像
             if (runningServer != null) {
                 runningServer.addQuote(unique);
@@ -141,6 +143,7 @@ public class FlappyProxyServer {
             if (runningServer != null) {
                 //开始缓存
                 runningServer.startCache(listener);
+                //开始
                 return getLocalServerUrl() + uuid;
             }
 
@@ -148,19 +151,19 @@ public class FlappyProxyServer {
             if (url.toLowerCase().endsWith("m3u8")) {
                 //服务地址
                 ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), uuid, url);
-                //添加
-                addServer(uuid, null, server);
                 //开始缓存
                 server.startCache(listener);
+                //添加
+                addServer(uuid, null, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             } else {
                 //服务地址
                 ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), uuid, url);
-                //添加
-                addServer(uuid, null, server);
                 //开始缓存
                 server.startCache(listener);
+                //添加
+                addServer(uuid, null, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             }
