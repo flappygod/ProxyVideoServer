@@ -417,7 +417,7 @@ public class ProxyServerM3u8 implements ProxyServer {
                         //缓存完成
                         downloadDoneModel.setTotalSegment(segments.size());
                         //完成
-                        ToolSDcard.writeObjectSdcard(getUrlDicotry(), ServerIDManager.getInstance(context).getUrlVideoID(urlPath) + "done.data", downloadDoneModel);
+                        ToolSDcard.writeObjectSdcard(getUrlDicotry(), urlVideoID + "done.data", downloadDoneModel);
                         //缓存完成
                         synchronized (cacheListeners) {
                             for (int s = 0; s < cacheListeners.size(); s++) {
