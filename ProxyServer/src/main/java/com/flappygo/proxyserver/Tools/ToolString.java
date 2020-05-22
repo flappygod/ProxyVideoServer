@@ -150,19 +150,9 @@ public class ToolString {
 
     //构建
     public static String generateActionPath(String relativePath, String actionID) {
-        if (relativePath.startsWith("/")) {
-            return "/" + actionID + relativePath;
-        } else {
-            return "/" + actionID + "/" + relativePath;
-        }
-    }
-
-    //构建
-    public static String generateActionPathHttp(String httpPath, String actionID) {
-        String retPath = httpPath;
-        if (retPath.startsWith("http")) {
-            retPath = retPath.replace(getHttpDomainPath(retPath), "");
-        }
+        //取得文件的名称
+        String retPath = getNameString(relativePath);
+        //返回actionID
         return "/" + actionID + "/" + retPath;
     }
 

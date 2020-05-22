@@ -73,7 +73,7 @@ public class ProxyServerM3u8 implements ProxyServer {
         this.context = context;
         this.actionID = actionID;
         this.urlPath = url;
-        this.isStoped=false;
+        this.isStoped = false;
         this.addAction();
     }
 
@@ -319,7 +319,7 @@ public class ProxyServerM3u8 implements ProxyServer {
                 //真实的子文件下载地址
                 String trueUrlPath = ToolString.generateChildPath(urlPath, paths.get(s));
                 //我们用于创建的Action地址
-                String trueAction = ToolString.generateActionPath(paths.get(s),actionID);
+                String trueAction = ToolString.generateActionPath(paths.get(s), actionID);
                 //真实的保存文件的地址
                 String trueDictionary = getUrlDicotry();
                 //替换掉实际地址
@@ -344,7 +344,7 @@ public class ProxyServerM3u8 implements ProxyServer {
                 //获取实际的域名信息
                 String trueUrlPath = paths.get(s);
                 //地址
-                String trueAction = ToolString.generateActionPathHttp(paths.get(s), actionID);
+                String trueAction = ToolString.generateActionPath(paths.get(s), actionID);
                 //真实的保存文件的地址
                 String trueDictionary = getUrlDicotry();
                 //替换掉实际地址
@@ -504,7 +504,7 @@ public class ProxyServerM3u8 implements ProxyServer {
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        String uuid= ServerIDManager.getInstance(context).generateUrlID(urlPath);
+        String uuid = ServerIDManager.getInstance(context).generateUrlID(urlPath);
         return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
     }
 
