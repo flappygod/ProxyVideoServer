@@ -46,7 +46,7 @@ public class ServerIDManager {
 
 
     //获取URL的服务ID
-    public String generateUrlID(String url) {
+    public String getUrlVideoID(String url) {
         //获取
         SharedPreferences mSharedPreferences = context.getSharedPreferences(PREFERENCENAME, Context.MODE_PRIVATE);
         //地址

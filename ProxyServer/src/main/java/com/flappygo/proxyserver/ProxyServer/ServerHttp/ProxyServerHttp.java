@@ -600,7 +600,7 @@ public class ProxyServerHttp implements ProxyServer {
                     //设置url地址
                     downloadDoneModel.setUrl(urlPath);
                     //设置actionID
-                    downloadDoneModel.setActionID(actionID);
+                    downloadDoneModel.setVideoID(actionID);
                     //缓存完成
                     downloadDoneModel.setTotalSegment(segments.size());
                     //完成
@@ -687,7 +687,7 @@ public class ProxyServerHttp implements ProxyServer {
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        String uuid= ServerIDManager.getInstance(context).generateUrlID(urlPath);
+        String uuid= ServerIDManager.getInstance(context).getUrlVideoID(urlPath);
         return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
     }
 

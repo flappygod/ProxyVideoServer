@@ -54,7 +54,7 @@ public class FlappyProxyServer {
 
     //获取URl
     private String getUrlUniqueActionID(String url, String unique) {
-        return ServerIDManager.getInstance(context).generateUrlID(url) + (unique == null ? "" : unique);
+        return ServerIDManager.getInstance(context).getUrlVideoID(url) + (unique == null ? "" : unique);
     }
 
     //代理地址
@@ -201,7 +201,7 @@ public class FlappyProxyServer {
         }
 
         //获取这个URL所对应的actionID
-        String actionID = ServerIDManager.getInstance(context).generateUrlID(url);
+        String actionID = ServerIDManager.getInstance(context).getUrlVideoID(url);
 
         //获取actionID的缓存地址
         final String path = ServerPathManager.getInstance(context).getDefaultCachePath(actionID);

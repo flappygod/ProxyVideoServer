@@ -45,6 +45,9 @@ public class ProxyServerM3u8 implements ProxyServer {
     //真实的actionID
     private String actionID;
 
+    //文件分配的ID
+    private String urlVideoID;
+
     //实际请求的地址
     private String urlPath;
 
@@ -73,7 +76,8 @@ public class ProxyServerM3u8 implements ProxyServer {
         this.context = context;
         this.actionID = actionID;
         this.urlPath = url;
-        this.isStoped=false;
+        this.isStoped = false;
+        this.urlVideoID = ServerIDManager.getInstance(context).getUrlVideoID(urlPath);
         this.addAction();
     }
 
@@ -283,12 +287,12 @@ public class ProxyServerM3u8 implements ProxyServer {
 
     //头部信息
     private String getM3u8HeadName() {
-        return actionID + "head.data";
+        return urlVideoID + "head.data";
     }
 
     //获取主要文件的名称
     private String getM3u8FileName() {
-        return actionID + ".data";
+        return urlVideoID + ".data";
     }
 
 
@@ -319,7 +323,7 @@ public class ProxyServerM3u8 implements ProxyServer {
                 //真实的子文件下载地址
                 String trueUrlPath = ToolString.generateChildPath(urlPath, paths.get(s));
                 //我们用于创建的Action地址
-                String trueAction = ToolString.generateActionPath(paths.get(s),actionID);
+                String trueAction = ToolString.generateActionPath(paths.get(s), actionID);
                 //真实的保存文件的地址
                 String trueDictionary = getUrlDicotry();
                 //替换掉实际地址
@@ -408,12 +412,12 @@ public class ProxyServerM3u8 implements ProxyServer {
                         DownloadDoneModel downloadDoneModel = new DownloadDoneModel();
                         //设置url地址
                         downloadDoneModel.setUrl(urlPath);
-                        //设置actionID
-                        downloadDoneModel.setActionID(actionID);
+                        //设置urlVideoID
+                        downloadDoneModel.setVideoID(urlVideoID);
                         //缓存完成
                         downloadDoneModel.setTotalSegment(segments.size());
                         //完成
-                        ToolSDcard.writeObjectSdcard(getUrlDicotry(), actionID + "done.data", downloadDoneModel);
+                        ToolSDcard.writeObjectSdcard(getUrlDicotry(), ServerIDManager.getInstance(context).getUrlVideoID(urlPath) + "done.data", downloadDoneModel);
                         //缓存完成
                         synchronized (cacheListeners) {
                             for (int s = 0; s < cacheListeners.size(); s++) {
@@ -504,7 +508,7 @@ public class ProxyServerM3u8 implements ProxyServer {
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        String uuid= ServerIDManager.getInstance(context).generateUrlID(urlPath);
+        String uuid = ServerIDManager.getInstance(context).getUrlVideoID(urlPath);
         return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
     }
 
