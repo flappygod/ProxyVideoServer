@@ -149,13 +149,15 @@ public class ProxyServerM3u8 implements ProxyServer {
             //返回字符串
             String file = ToolSDcard.readStringSdcard(getUrlDicotry(), getM3u8FileName());
             //请求成功
-            response.code(HttpConfig.NET_SUCCESS);
+            response.code(HttpConfig.NET_SUCCESS_PART);
             //所有的都返回
             response.getHeaders().addAll(map);
             //所有的paths进入代理流程
             String responseProxStr = initPaths(requestMaps, file);
+            //返回长度
+            byte[] bytes = responseProxStr.getBytes();
             //写入数据
-            ByteBufferList bufferList = new ByteBufferList(responseProxStr.getBytes());
+            ByteBufferList bufferList = new ByteBufferList(bytes);
             //写入进去
             response.write(bufferList);
             //结束
@@ -201,17 +203,20 @@ public class ProxyServerM3u8 implements ProxyServer {
                 String key = (String) resIterator.next();
                 //当前的Range
                 if (key != null &&
-                        !key.toLowerCase().equals("expires")) {
+                        !key.toLowerCase().equals("expires") &&
+                        !key.toLowerCase().equals("content-length") &&
+                        !key.toLowerCase().equals("content-range")) {
                     responesMaps.put(key, maps.get(key));
                 }
             }
-            response.getHeaders().addAll(responesMaps);
+
             //设置
             InputStream inputStream = conn.getInputStream();
             //重置时间
             resetRetryTime();
             //将数据转换为String
             String responseStr = ToolString.convertStreamToStr(inputStream, "utf-8");
+
 
             //不是直播的情况才缓存，是直播的话，这个文件会一直更新，我们不能缓存
             if (!ToolString.isLive(responseStr)) {
@@ -223,6 +228,25 @@ public class ProxyServerM3u8 implements ProxyServer {
 
             //所有的paths进入代理流程
             String responseProxStr = initPaths(requestMaps, responseStr);
+
+
+            //获取bytes
+            byte[] bytes = responseStr.getBytes();
+
+            //返回当前的Range
+            List<String> range = new ArrayList<>();
+            range.add("bytes " + 0 + "-" + (bytes.length - 1) + "/" + bytes.length);
+            responesMaps.put("Content-Range", range);
+
+            //返回当前的大小
+            List<String> datas = new ArrayList<>();
+            datas.add(Long.toString(bytes.length));
+            responesMaps.put("Content-Length", datas);
+
+            //返回真实数据
+            response.getHeaders().addAll(responesMaps);
+
+
             //写入数据
             ByteBufferList bufferList = new ByteBufferList(responseProxStr.getBytes());
             //写入进去
