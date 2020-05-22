@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 public class HttpRequestCached {
 
     //父类
-    private ProxyServer parent;
+    private ProxyServer proxyServer;
 
     //返回消息
     private AsyncHttpServerResponse response;
@@ -38,7 +38,7 @@ public class HttpRequestCached {
         this.startOffset = startOffset;
         this.response = res;
         this.listener = listener;
-        this.parent = parent;
+        this.proxyServer = parent;
         this.path = path;
         this.response.setWriteableCallback(new WritableCallback() {
             @Override
@@ -70,7 +70,7 @@ public class HttpRequestCached {
             while ((len = inputStream.read(buffer)) != -1) {
 
                 //整个服务已经关闭了，停止
-                if (parent.isStoped()) {
+                if (proxyServer.isStoped()) {
                     //结束了
                     if (listener != null) {
                         listener.segmentProxyStoped();

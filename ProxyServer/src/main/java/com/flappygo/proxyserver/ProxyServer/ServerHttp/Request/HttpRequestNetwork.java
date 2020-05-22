@@ -17,7 +17,7 @@ import java.util.Iterator;
 public class HttpRequestNetwork {
 
     //父类
-    private ProxyServer parent;
+    private ProxyServer proxyServer;
     //请求
     private HashMap<String, String> headers;
     //返回消息
@@ -52,7 +52,7 @@ public class HttpRequestNetwork {
                               String urlStr,
                               long rangeStart,
                               long rangeLength) {
-        this.parent = parent;
+        this.proxyServer = parent;
         this.headers = headers;
         this.response = response;
         this.urlStr = urlStr;
@@ -111,7 +111,7 @@ public class HttpRequestNetwork {
             while ((len = inputStream.read(buffer)) != -1) {
 
                 //整个服务已经停止，不再相应
-                if (parent.isStoped()) {
+                if (proxyServer.isStoped()) {
                     //提醒监听结束
                     if (listener != null) {
                         listener.segmentProxyStoped();
@@ -181,7 +181,7 @@ public class HttpRequestNetwork {
                 //等待300毫秒
                 waitMilliseconds(250);
                 //重新请求
-                if (!parent.isStoped()) {
+                if (!proxyServer.isStoped()) {
                     doResponseNet();
                 }
             } else {
@@ -211,7 +211,7 @@ public class HttpRequestNetwork {
     //是否需要重新
     private boolean isNeedRetry() {
         //已经停止了的就不需要
-        if (parent.isStoped()) {
+        if (proxyServer.isStoped()) {
             return false;
         }
         //重试时间初始化
