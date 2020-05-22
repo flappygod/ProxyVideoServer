@@ -131,12 +131,12 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         mediaPlayer.play();
 
         //跳转
-        Handler handler = new Handler() {
-            public void handleMessage(Message message) {
-                //mediaPlayer.setPosition(0.8f);
-            }
-        };
-        handler.sendEmptyMessageDelayed(1, 20000);
+//        Handler handler = new Handler() {
+//            public void handleMessage(Message message) {
+//                mediaPlayer.setPosition(0.8f);
+//            }
+//        };
+//        handler.sendEmptyMessageDelayed(1, 20000);
 
     }
 
