@@ -74,6 +74,7 @@ public class ProxyServerM3u8 implements ProxyServer {
         this.context = context;
         this.uuid = uuid;
         this.urlPath = url;
+        this.isStoped=false;
         this.addAction();
     }
 
