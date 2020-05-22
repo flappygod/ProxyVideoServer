@@ -38,7 +38,7 @@ public class ServerProxy extends AsyncHttpServer {
 
     //移除子类
     public void removeVideoChildProxy(String trueAction) {
-        instance.removeAction(AsyncHttpGet.METHOD, trueAction);
+        //instance.removeAction(AsyncHttpGet.METHOD, trueAction);
     }
 
     //添加
@@ -48,7 +48,7 @@ public class ServerProxy extends AsyncHttpServer {
 
     //移除
     public void removeVideoProxy(String uuid) {
-        instance.removeAction(AsyncHttpGet.METHOD, "/" + uuid);
+        //instance.removeAction(AsyncHttpGet.METHOD, "/" + uuid);
     }
 
 }
