@@ -11,5 +11,7 @@ public class ServerConfig {
     //线程池的大小
     public static int THREAD_POOL_SIZE = 10;
 
+    //端口号
+    public static int PORT = 15688;
 
 }

@@ -13,6 +13,7 @@ import com.flappygo.proxyserver.Interface.ProxyCacheListener;
 import com.flappygo.proxyserver.Interface.ProxyServer;
 import com.flappygo.proxyserver.ProxyServer.Models.DownloadDoneModel;
 import com.flappygo.proxyserver.ProxyServer.ServerHttp.Models.HttpSegmentModel;
+import com.flappygo.proxyserver.ProxyServer.ServerProxy;
 import com.flappygo.proxyserver.ServerPath.ServerPathManager;
 import com.flappygo.proxyserver.Tools.ToolIntenet;
 import com.flappygo.proxyserver.Tools.ToolSDcard;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 //请求用于HTTP等的请求
-public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
+public class ProxyServerHttp implements ProxyServer {
 
 
     //上下文保存
@@ -108,7 +109,7 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
                 }
             }
         };
-        this.get("/" + uuid, callback);
+        ServerProxy.getInstance().addVideoProxy(uuid, callback);
     }
 
     //通过缓存进行处理
@@ -703,14 +704,12 @@ public class ProxyServerHttp extends AsyncHttpServer implements ProxyServer {
         if (isStoped == false) {
             //停止
             isStoped = true;
-            //回调
-            removeAction(AsyncHttpGet.METHOD, "/" + uuid);
+            //移除
+            ServerProxy.getInstance().removeVideoProxy(uuid);
             //取消所有的下载线程
             cancelAllDownloading();
             //取消所有的监听
             cancelAllListener();
-            //停止
-            stop();
         }
     }
 

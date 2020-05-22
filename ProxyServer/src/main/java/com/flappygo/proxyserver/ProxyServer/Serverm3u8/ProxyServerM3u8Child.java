@@ -3,8 +3,10 @@ package com.flappygo.proxyserver.ProxyServer.Serverm3u8;
 import com.flappygo.proxyserver.Download.Actor.DownLoadActor;
 import com.flappygo.proxyserver.Download.Thread.ProxyDownloadThread;
 import com.flappygo.proxyserver.Interface.ProxyServer;
+import com.flappygo.proxyserver.ProxyServer.ServerProxy;
 import com.flappygo.proxyserver.ProxyServer.Serverm3u8.Request.M3u8RequestCached;
 import com.flappygo.proxyserver.ProxyServer.Serverm3u8.Request.M3u8RequestNetwork;
+import com.koushikdutta.async.http.AsyncHttpGet;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.koushikdutta.async.http.server.HttpServerRequestCallback;
@@ -16,6 +18,9 @@ public class ProxyServerM3u8Child implements HttpServerRequestCallback {
     //代理服务
     private ProxyServer proxyServer;
 
+    //真实
+    private String trueAction;
+
     //下载器
     private DownLoadActor downLoadActor;
 
@@ -25,11 +30,15 @@ public class ProxyServerM3u8Child implements HttpServerRequestCallback {
 
     //真实地址
     public ProxyServerM3u8Child(ProxyServer proxyServer,
+                                String trueAction,
                                 DownLoadActor actor,
                                 boolean isAlive) {
         this.proxyServer = proxyServer;
+        this.trueAction = trueAction;
         this.downLoadActor = actor;
         this.isAlive = isAlive;
+        //添加action
+        ServerProxy.getInstance().addVideoChildProxy(trueAction, this);
     }
 
     //设置actor
@@ -66,6 +75,11 @@ public class ProxyServerM3u8Child implements HttpServerRequestCallback {
                 proxyServer.getPoolExecutor().execute(thread);
             }
         }
+    }
+
+    //移除
+    public void stop() {
+        ServerProxy.getInstance().removeAction(trueAction, AsyncHttpGet.METHOD);
     }
 
 

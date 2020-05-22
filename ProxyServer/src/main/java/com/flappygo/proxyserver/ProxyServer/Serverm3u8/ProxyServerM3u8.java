@@ -2,28 +2,27 @@ package com.flappygo.proxyserver.ProxyServer.Serverm3u8;
 
 import android.content.Context;
 
-import com.flappygo.proxyserver.Config.HttpConfig;
-import com.flappygo.proxyserver.Config.ServerConfig;
-import com.flappygo.proxyserver.Download.Actor.DownLoadActor;
-import com.flappygo.proxyserver.Download.Thread.ProxyDownloadThread;
 import com.flappygo.proxyserver.Download.Thread.ProxyThreadPoolExecutor;
 import com.flappygo.proxyserver.Download.Thread.ProxyThreadPoolListener;
-import com.flappygo.proxyserver.FlappyProxyServer;
-import com.flappygo.proxyserver.Interface.ProxyCacheListener;
-import com.flappygo.proxyserver.Interface.ProxyServer;
+import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
+import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
+import com.flappygo.proxyserver.Download.Thread.ProxyDownloadThread;
+import com.koushikdutta.async.http.server.HttpServerRequestCallback;
 import com.flappygo.proxyserver.ProxyServer.Models.DownloadDoneModel;
+import com.flappygo.proxyserver.Download.Actor.DownLoadActor;
 import com.flappygo.proxyserver.ServerPath.ServerPathManager;
+import com.flappygo.proxyserver.Interface.ProxyCacheListener;
+import com.koushikdutta.async.callback.CompletedCallback;
+import com.flappygo.proxyserver.ProxyServer.ServerProxy;
+import com.flappygo.proxyserver.Interface.ProxyServer;
+import com.flappygo.proxyserver.Config.ServerConfig;
+import com.flappygo.proxyserver.FlappyProxyServer;
+import com.flappygo.proxyserver.Config.HttpConfig;
 import com.flappygo.proxyserver.Tools.ToolIntenet;
 import com.flappygo.proxyserver.Tools.ToolSDcard;
 import com.flappygo.proxyserver.Tools.ToolString;
 import com.koushikdutta.async.ByteBufferList;
-import com.koushikdutta.async.callback.CompletedCallback;
-import com.koushikdutta.async.http.AsyncHttpGet;
 import com.koushikdutta.async.http.Multimap;
-import com.koushikdutta.async.http.server.AsyncHttpServer;
-import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
-import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
-import com.koushikdutta.async.http.server.HttpServerRequestCallback;
 
 import java.io.File;
 import java.io.InputStream;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 //代理M3u8的地址
-public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
+public class ProxyServerM3u8 implements ProxyServer {
 
     //上下文保存
     private Context context;
@@ -129,10 +128,9 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
                 else {
                     doForNet(requestMaps, response);
                 }
-
             }
         };
-        this.get("/" + uuid, callback);
+        ServerProxy.getInstance().addVideoProxy(uuid, callback);
     }
 
     //通过缓存进行处理
@@ -330,11 +328,9 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
                 //加入到线程池中执行
                 threadPool.execute(thread);
                 //创建
-                ProxyServerM3u8Child requestCallback = new ProxyServerM3u8Child(this, actor, isAlive);
+                ProxyServerM3u8Child requestCallback = new ProxyServerM3u8Child(this, trueAction, actor, isAlive);
                 //添加子请求
                 childList.add(requestCallback);
-                //地址
-                this.get(trueAction, requestCallback);
 
             }
             //如果是http开头的
@@ -357,11 +353,9 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
                 //加入到线程池中执行
                 threadPool.execute(thread);
                 //创建
-                ProxyServerM3u8Child requestCallback = new ProxyServerM3u8Child(this, actor, isAlive);
+                ProxyServerM3u8Child requestCallback = new ProxyServerM3u8Child(this, trueAction, actor, isAlive);
                 //添加子请求
                 childList.add(requestCallback);
-                //地址
-                this.get(trueAction, requestCallback);
 
             }
         }
@@ -469,6 +463,15 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
         }
     }
 
+    //停止所有的服务
+    private void cancelAllChild() {
+        synchronized (this) {
+            for (int s = 0; s < childServerList.size(); s++) {
+                childServerList.get(s).stop();
+            }
+        }
+    }
+
     //取消所有的监听
     private void cancelAllListener() {
         //缓存已经停止
@@ -514,14 +517,14 @@ public class ProxyServerM3u8 extends AsyncHttpServer implements ProxyServer {
         if (isStoped == false) {
             //停止
             isStoped = true;
-            //回调
-            removeAction(AsyncHttpGet.METHOD, "/" + uuid);
+            //移除
+            ServerProxy.getInstance().removeVideoProxy(uuid);
             //取消所有的下载线程
             cancelAllDownloading();
+            //停止所有的子类代理
+            cancelAllChild();
             //取消所有的监听
             cancelAllListener();
-            //停止
-            stop();
         }
     }
 
