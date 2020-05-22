@@ -119,14 +119,6 @@ public class HttpRequestNetwork {
                     break;
                 }
 
-                if (!response.isOpen()) {
-                    //提醒监听结束
-                    if (listener != null) {
-                        listener.segmentProxyStoped();
-                    }
-                    break;
-                }
-
                 //跳出
                 if (rangeNower == rangeStart + rangeLength){
                     break;

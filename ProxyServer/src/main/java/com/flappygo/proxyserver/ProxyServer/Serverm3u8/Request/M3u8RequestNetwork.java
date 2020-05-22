@@ -203,14 +203,6 @@ public class M3u8RequestNetwork {
                     break;
                 }
 
-                if (!response.isOpen()) {
-                    //停止写入了，停止了
-                    response.end();
-                    //退出了
-                    break;
-                }
-
-
                 //不是等待状态
                 if (awaitFlag == false) {
                     //创建

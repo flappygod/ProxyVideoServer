@@ -78,15 +78,6 @@ public class HttpRequestCached {
                     break;
                 }
 
-                //没有继续开启了
-                if (!response.isOpen()) {
-                    //提醒监听结束
-                    if (listener != null) {
-                        listener.segmentProxyStoped();
-                    }
-                    break;
-                }
-
                 //等待flag
                 if (awaitFlag == false) {
                     //创建
