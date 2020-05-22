@@ -148,13 +148,22 @@ public class ToolString {
         }
     }
 
-    //相对地址
-    public static String generateActionPath(String relativePath) {
+    //构建
+    public static String generateActionPath(String relativePath, String actionID) {
         if (relativePath.startsWith("/")) {
-            return relativePath;
+            return "/" + actionID + relativePath;
         } else {
-            return "/" + relativePath;
+            return "/" + actionID + "/" + relativePath;
         }
+    }
+
+    //构建
+    public static String generateActionPathHttp(String httpPath, String actionID) {
+        String retPath = httpPath;
+        if (retPath.startsWith("http")) {
+            retPath = retPath.replace(getHttpDomainPath(retPath), "");
+        }
+        return "/" + actionID + "/" + retPath;
     }
 
 
@@ -186,25 +195,25 @@ public class ToolString {
 
     }
 
-    public static List<String> splitStrList(String str, String split){
-        List<String> rets=new ArrayList<>();
-        if(str!=null&&split!=null){
-            String[] strs=str.split(split);
-            for(int s=0;s<strs.length;s++){
+    public static List<String> splitStrList(String str, String split) {
+        List<String> rets = new ArrayList<>();
+        if (str != null && split != null) {
+            String[] strs = str.split(split);
+            for (int s = 0; s < strs.length; s++) {
                 rets.add(strs[s]);
             }
         }
         return rets;
     }
 
-    public static String strListToStr(List<String> strs,String split){
-        if(strs!=null&&split!=null){
-            String retStr="";
-            for(int s=0;s<strs.size();s++){
-                if(s==strs.size()-1){
-                    retStr=retStr+strs.get(s);
-                }else{
-                    retStr=retStr+strs.get(s)+split;
+    public static String strListToStr(List<String> strs, String split) {
+        if (strs != null && split != null) {
+            String retStr = "";
+            for (int s = 0; s < strs.size(); s++) {
+                if (s == strs.size() - 1) {
+                    retStr = retStr + strs.get(s);
+                } else {
+                    retStr = retStr + strs.get(s) + split;
                 }
             }
             return retStr;
