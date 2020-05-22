@@ -39,6 +39,8 @@ import java.util.Map;
 //请求用于HTTP等的请求
 public class ProxyServerHttp implements ProxyServer {
 
+    //引用计数
+    private List<String> quotes = new ArrayList<>();
 
     //上下文保存
     private Context context;
@@ -750,6 +752,32 @@ public class ProxyServerHttp implements ProxyServer {
         cancelAllDownloading();
         //取消所有监听
         cancelAllListener();
+    }
+
+    @Override
+    public void addQuote(String unique) {
+        synchronized (quotes) {
+            if (!quotes.contains(unique)) {
+                quotes.add(unique);
+            }
+        }
+
+    }
+
+    @Override
+    public void removeQuote(String unique) {
+        synchronized (quotes) {
+            if (quotes.contains(unique)) {
+                quotes.remove(unique);
+            }
+        }
+    }
+
+    @Override
+    public boolean isNoQuote() {
+        synchronized (quotes) {
+            return quotes.size() == 0 ? true : false;
+        }
     }
 
 

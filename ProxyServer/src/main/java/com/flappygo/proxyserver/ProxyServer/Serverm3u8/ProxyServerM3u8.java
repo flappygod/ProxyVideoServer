@@ -37,6 +37,9 @@ import java.util.Map;
 //代理M3u8的地址
 public class ProxyServerM3u8 implements ProxyServer {
 
+    //引用计数
+    private List<String> quotes = new ArrayList<>();
+
     //上下文保存
     private Context context;
 
@@ -565,6 +568,32 @@ public class ProxyServerM3u8 implements ProxyServer {
         cancelAllDownloading();
         //取消所有监听
         cancelAllListener();
+    }
+
+    @Override
+    public void addQuote(String unique) {
+        synchronized (quotes) {
+            if (!quotes.contains(unique)) {
+                quotes.add(unique);
+            }
+        }
+
+    }
+
+    @Override
+    public void removeQuote(String unique) {
+        synchronized (quotes) {
+            if (quotes.contains(unique)) {
+                quotes.remove(unique);
+            }
+        }
+    }
+
+    @Override
+    public boolean isNoQuote() {
+        synchronized (quotes) {
+            return quotes.size() == 0 ? true : false;
+        }
     }
 
     //开启线程以便于缓存当前文件

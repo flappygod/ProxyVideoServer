@@ -25,7 +25,7 @@ public class FlappyProxyServer {
     private Context context;
 
     //服务
-    ConcurrentHashMap<String, ProxyServer> proxyServer = new ConcurrentHashMap<String, ProxyServer>();
+    private ConcurrentHashMap<String, ProxyServer> proxyServer = new ConcurrentHashMap<String, ProxyServer>();
 
     //单例模式
     private static FlappyProxyServer instance;
@@ -53,7 +53,7 @@ public class FlappyProxyServer {
     }
 
     //代理地址
-    public String proxyStart(String url) {
+    public String proxyStart(String url, String unique) {
 
         synchronized (this) {
             //判空处理
@@ -75,8 +75,10 @@ public class FlappyProxyServer {
             //新增被代理的URL
             ServerIDManager.getInstance(context).addUrl(url);
 
+            ProxyServer runningServer = getRunningServer(url);
             //如果当前已经存在服务对齐镜像
-            if (getRunningServer(url) != null) {
+            if (runningServer != null) {
+                runningServer.addQuote(unique);
                 return getLocalServerUrl() + uuid;
             }
 
@@ -85,14 +87,14 @@ public class FlappyProxyServer {
                 //服务地址
                 ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), uuid, url);
                 //添加
-                addServer(uuid, server);
+                addServer(uuid, unique, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             } else {
                 //服务地址
                 ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), uuid, url);
                 //添加
-                addServer(uuid, server);
+                addServer(uuid, unique, server);
                 //返回的实际请求地址
                 return getLocalServerUrl() + uuid;
             }
@@ -101,25 +103,10 @@ public class FlappyProxyServer {
 
 
     //停止代理
-    public boolean proxyStop(String url) {
+    public boolean proxyStop(String url, String unique) {
         //地址
         synchronized (this) {
-            Iterator iterator = proxyServer.keySet().iterator();
-            while (iterator.hasNext()) {
-                //遍历
-                String key = (String) iterator.next();
-                //获取代理服务
-                ProxyServer server = proxyServer.get(key);
-                //如果是针对这个地址的代理服务
-                if (server.getUrl().equals(url)) {
-                    //停止
-                    server.stopServer();
-                    //移除
-                    proxyServer.remove(key);
-                    //返回成功
-                    return true;
-                }
-            }
+            removeServer(url, unique);
         }
         return false;
     }
@@ -154,6 +141,7 @@ public class FlappyProxyServer {
             if (runningServer != null) {
                 //开始缓存
                 runningServer.startCache(listener);
+                return getLocalServerUrl() + uuid;
             }
 
             //如果是M3u8进入M3U8的处理方式
@@ -161,7 +149,7 @@ public class FlappyProxyServer {
                 //服务地址
                 ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), uuid, url);
                 //添加
-                addServer(uuid, server);
+                addServer(uuid, null, server);
                 //开始缓存
                 server.startCache(listener);
                 //返回的实际请求地址
@@ -170,7 +158,7 @@ public class FlappyProxyServer {
                 //服务地址
                 ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), uuid, url);
                 //添加
-                addServer(uuid, server);
+                addServer(uuid, null, server);
                 //开始缓存
                 server.startCache(listener);
                 //返回的实际请求地址
@@ -183,20 +171,7 @@ public class FlappyProxyServer {
     public boolean proxyCacheStop(String url) {
         //地址
         synchronized (this) {
-            Iterator iterator = proxyServer.keySet().iterator();
-            while (iterator.hasNext()) {
-                //遍历
-                String key = (String) iterator.next();
-                //获取代理服务
-                ProxyServer server = proxyServer.get(key);
-                //如果是针对这个地址的代理服务
-                if (server.getUrl().equals(url)) {
-                    //停止
-                    server.stopCache();
-                    //返回成功
-                    return true;
-                }
-            }
+            removeServer(url, null);
         }
         return false;
     }
@@ -274,9 +249,41 @@ public class FlappyProxyServer {
     }
 
     //添加server
-    private void addServer(String key, ProxyServer server) {
-
+    private void addServer(String key, String unique, ProxyServer server) {
+        if (unique != null) {
+            server.addQuote(unique);
+        }
         proxyServer.put(key, server);
+    }
+
+    //移除server
+    private boolean removeServer(String url, String unique) {
+        //迭代器
+        Iterator iterator = proxyServer.keySet().iterator();
+        //遍历
+        while (iterator.hasNext()) {
+            //遍历
+            String key = (String) iterator.next();
+            //获取代理服务
+            ProxyServer server = proxyServer.get(key);
+            //如果相等
+            if (server.getUrl().equals(url)) {
+                //移除
+                if (unique != null) {
+                    server.removeQuote(unique);
+                }
+                //如果已经没有了引用
+                if (server.isNoQuote()) {
+                    //停止
+                    server.stopServer();
+                    //移除
+                    proxyServer.remove(key);
+                    //返回成功
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //检查SD卡
