@@ -14,6 +14,7 @@ import com.flappygo.proxyserver.Interface.ProxyServer;
 import com.flappygo.proxyserver.ProxyServer.Models.DownloadDoneModel;
 import com.flappygo.proxyserver.ProxyServer.ServerHttp.Models.HttpSegmentModel;
 import com.flappygo.proxyserver.ProxyServer.ServerProxy;
+import com.flappygo.proxyserver.ServerID.ServerIDManager;
 import com.flappygo.proxyserver.ServerPath.ServerPathManager;
 import com.flappygo.proxyserver.Tools.ToolIntenet;
 import com.flappygo.proxyserver.Tools.ToolSDcard;
@@ -679,14 +680,15 @@ public class ProxyServerHttp implements ProxyServer {
 
     //获取分配的actionID
     @Override
-    public String getUrlactionID() {
+    public String getActionID() {
         return actionID;
     }
 
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        return ServerPathManager.getInstance(context).getDefaultCachePath(actionID);
+        String uuid= ServerIDManager.getInstance(context).generateUrlID(urlPath);
+        return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
     }
 
     @Override

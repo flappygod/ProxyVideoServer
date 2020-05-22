@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.flappygo.proxyserver.Download.Thread.ProxyThreadPoolExecutor;
 import com.flappygo.proxyserver.Download.Thread.ProxyThreadPoolListener;
+import com.flappygo.proxyserver.ServerID.ServerIDManager;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.flappygo.proxyserver.Download.Thread.ProxyDownloadThread;
@@ -496,14 +497,15 @@ public class ProxyServerM3u8 implements ProxyServer {
 
     //获取分配的actionID
     @Override
-    public String getUrlactionID() {
+    public String getActionID() {
         return actionID;
     }
 
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        return ServerPathManager.getInstance(context).getDefaultCachePath(actionID);
+        String uuid= ServerIDManager.getInstance(context).generateUrlID(urlPath);
+        return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
     }
 
     //获取

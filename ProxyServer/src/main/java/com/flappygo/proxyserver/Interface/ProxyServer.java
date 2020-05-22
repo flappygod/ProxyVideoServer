@@ -10,11 +10,11 @@ public interface ProxyServer {
     //获取远程服务的地址
     String getUrl();
 
-    //获取当前服务的actionID
-    String getUrlactionID();
-
     //获取保存的目录
     String getUrlDicotry();
+
+    //获取当前服务的actionID
+    String getActionID();
 
     //获取当前的线程池
     ScheduledThreadPoolExecutor getPoolExecutor();
