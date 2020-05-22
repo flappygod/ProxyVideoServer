@@ -594,11 +594,11 @@ public class ProxyServerHttp implements ProxyServer {
                     //设置url地址
                     downloadDoneModel.setUrl(urlPath);
                     //设置actionID
-                    downloadDoneModel.setVideoID(actionID);
+                    downloadDoneModel.setVideoID(urlVideoID);
                     //缓存完成
                     downloadDoneModel.setTotalSegment(segments.size());
                     //完成
-                    ToolSDcard.writeObjectSdcard(getUrlDicotry(), actionID + "done.data", downloadDoneModel);
+                    ToolSDcard.writeObjectSdcard(getUrlDicotry(), urlVideoID + "done.data", downloadDoneModel);
                     //监听
                     synchronized (cacheListeners) {
                         for (int s = 0; s < cacheListeners.size(); s++) {
