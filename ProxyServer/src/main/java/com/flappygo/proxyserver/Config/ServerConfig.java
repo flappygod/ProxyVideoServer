@@ -9,7 +9,7 @@ public class ServerConfig {
     public static long FILE_SEGMENHT_SIZE = 1024 * 1024 * 2;
 
     //线程池的大小
-    public static int THREAD_POOL_SIZE = 1;
+    public static int THREAD_POOL_SIZE = 10;
 
     //端口号
     public static int PORT = 15688;
