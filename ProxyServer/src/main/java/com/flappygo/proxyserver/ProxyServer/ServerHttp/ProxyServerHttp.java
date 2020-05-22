@@ -45,6 +45,9 @@ public class ProxyServerHttp implements ProxyServer {
     //真实的actionID
     private String actionID;
 
+    //视频的ID
+    private String urlVideoID;
+
     //实际请求的地址
     private String urlPath;
 
@@ -73,7 +76,8 @@ public class ProxyServerHttp implements ProxyServer {
         this.context = context;
         this.actionID = actionID;
         this.urlPath = url;
-        this.isStoped=false;
+        this.isStoped = false;
+        this.urlVideoID = ServerIDManager.getInstance(context).getUrlVideoID(urlPath);
         this.addAction();
     }
 
@@ -503,16 +507,6 @@ public class ProxyServerHttp implements ProxyServer {
     }
 
 
-    //获取主要文件的名称
-    private String getHttpFileName() {
-        return actionID + ".data";
-    }
-
-    //获取主要文件的头部响应名称
-    private String getHttpHeadName() {
-        return actionID + "head.data";
-    }
-
     //处理
     private void initPaths(HashMap<String, String> headers,
                            long contentLength,
@@ -687,8 +681,17 @@ public class ProxyServerHttp implements ProxyServer {
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        String uuid= ServerIDManager.getInstance(context).getUrlVideoID(urlPath);
-        return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
+        return ServerPathManager.getInstance(context).getDefaultCachePath(urlVideoID);
+    }
+
+    //获取主要文件的名称
+    private String getHttpFileName() {
+        return urlVideoID + ".data";
+    }
+
+    //获取主要文件的头部响应名称
+    private String getHttpHeadName() {
+        return urlVideoID + "head.data";
     }
 
     @Override
@@ -723,7 +726,7 @@ public class ProxyServerHttp implements ProxyServer {
     public void startCache(ProxyCacheListener listener) {
 
         //完成下载的文件
-        DownloadDoneModel model = (DownloadDoneModel) ToolSDcard.getObjectSdcard(getUrlDicotry(), actionID + "done.data");
+        DownloadDoneModel model = (DownloadDoneModel) ToolSDcard.getObjectSdcard(getUrlDicotry(), urlVideoID + "done.data");
 
         //如果已经存在了
         if (model != null) {
