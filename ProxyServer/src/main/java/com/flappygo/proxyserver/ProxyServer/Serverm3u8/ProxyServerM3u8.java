@@ -119,6 +119,9 @@ public class ProxyServerM3u8 implements ProxyServer {
                     }
                 }
 
+                //从零开始
+                requestMaps.put("Range", "bytes=" + 0 + "-");
+
                 //设置关闭的监听
                 response.setClosedCallback(new CompletedCallback() {
                     @Override
