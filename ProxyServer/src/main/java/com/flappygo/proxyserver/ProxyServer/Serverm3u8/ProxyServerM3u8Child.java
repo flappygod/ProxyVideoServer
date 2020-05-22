@@ -79,7 +79,7 @@ public class ProxyServerM3u8Child implements HttpServerRequestCallback {
 
     //移除
     public void stop() {
-        ServerProxy.getInstance().removeAction(trueAction, AsyncHttpGet.METHOD);
+        ServerProxy.getInstance().removeVideoChildProxy(trueAction);
     }
 
 

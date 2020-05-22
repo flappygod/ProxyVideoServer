@@ -33,18 +33,23 @@ public class ServerProxy extends AsyncHttpServer {
 
     //添加子类
     public void addVideoChildProxy(String trueAction, HttpServerRequestCallback serverRequestCallback) {
-        instance.get(trueAction, serverRequestCallback);
+        instance.addAction(trueAction, AsyncHttpGet.METHOD, serverRequestCallback);
+    }
+
+    //移除子类
+    public void removeVideoChildProxy(String trueAction) {
+        instance.removeAction(trueAction, AsyncHttpGet.METHOD);
     }
 
 
     //添加
     public void addVideoProxy(String uuid, HttpServerRequestCallback serverRequestCallback) {
-        instance.get("/" + uuid, serverRequestCallback);
+        instance.addAction("/" + uuid, AsyncHttpGet.METHOD, serverRequestCallback);
     }
 
     //移除
     public void removeVideoProxy(String uuid) {
-        instance.removeAction(AsyncHttpGet.METHOD, "/" + uuid);
+        instance.removeAction("/" + uuid, AsyncHttpGet.METHOD);
     }
 
 }
