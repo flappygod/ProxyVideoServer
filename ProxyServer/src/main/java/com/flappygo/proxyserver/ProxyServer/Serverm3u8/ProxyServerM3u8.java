@@ -522,10 +522,10 @@ public class ProxyServerM3u8 implements ProxyServer {
             isStoped = true;
             //移除
             ServerProxy.getInstance().removeVideoProxy(uuid);
-            //取消所有的下载线程
-            cancelAllDownloading();
             //停止所有的子类代理
             cancelAllChild();
+            //取消所有的下载线程
+            cancelAllDownloading();
             //取消所有的监听
             cancelAllListener();
         }
