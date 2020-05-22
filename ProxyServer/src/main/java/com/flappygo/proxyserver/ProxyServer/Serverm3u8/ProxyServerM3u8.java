@@ -217,15 +217,6 @@ public class ProxyServerM3u8 implements ProxyServer {
             //将数据转换为String
             String responseStr = ToolString.convertStreamToStr(inputStream, "utf-8");
 
-
-            //不是直播的情况才缓存，是直播的话，这个文件会一直更新，我们不能缓存
-            if (!ToolString.isLive(responseStr)) {
-                //保存
-                ToolSDcard.writeStringSdcard(getUrlDicotry(), getM3u8FileName(), responseStr);
-                //写入header
-                ToolSDcard.writeObjectSdcard(getUrlDicotry(), getM3u8HeadName(), responesMaps);
-            }
-
             //所有的paths进入代理流程
             responseStr = initPaths(requestMaps, responseStr);
 
@@ -241,6 +232,14 @@ public class ProxyServerM3u8 implements ProxyServer {
             List<String> datas = new ArrayList<>();
             datas.add(Long.toString(bytes.length));
             responesMaps.put("Content-Length", datas);
+
+            //不是直播的情况才缓存，是直播的话，这个文件会一直更新，我们不能缓存
+            if (!ToolString.isLive(responseStr)) {
+                //保存
+                ToolSDcard.writeStringSdcard(getUrlDicotry(), getM3u8FileName(), responseStr);
+                //写入header
+                ToolSDcard.writeObjectSdcard(getUrlDicotry(), getM3u8HeadName(), responesMaps);
+            }
 
             //返回真实数据
             response.getHeaders().addAll(responesMaps);
