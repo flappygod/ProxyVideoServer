@@ -145,17 +145,33 @@ public class ProxyServerM3u8 implements ProxyServer {
                             final AsyncHttpServerResponse response) {
         try {
             //返回对应的header文件
-            HashMap map = (HashMap) ToolSDcard.getObjectSdcard(getUrlDicotry(), getM3u8HeadName());
+            HashMap responesMaps = (HashMap) ToolSDcard.getObjectSdcard(getUrlDicotry(), getM3u8HeadName());
+
             //返回字符串
             String responseStr = ToolSDcard.readStringSdcard(getUrlDicotry(), getM3u8FileName());
+
             //请求成功
             response.code(HttpConfig.NET_SUCCESS_PART);
+
             //所有的paths进入代理流程
-            String responseProxStr = initPaths(requestMaps, responseStr);
-            //所有的都返回
-            response.getHeaders().addAll(map);
-            //返回长度
-            byte[] bytes = responseProxStr.getBytes();
+            responseStr = initPaths(requestMaps, responseStr);
+
+            //获取bytes
+            byte[] bytes = responseStr.getBytes();
+
+            //返回当前的Range
+            List<String> range = new ArrayList<>();
+            range.add("bytes " + 0 + "-" + (bytes.length - 1) + "/" + bytes.length);
+            responesMaps.put("Content-Range", range);
+
+            //返回当前的大小
+            List<String> datas = new ArrayList<>();
+            datas.add(Long.toString(bytes.length));
+            responesMaps.put("Content-Length", datas);
+
+            //返回真实数据
+            response.getHeaders().addAll(responesMaps);
+
             //写入数据
             ByteBufferList bufferList = new ByteBufferList(bytes);
             //写入进去
@@ -217,6 +233,15 @@ public class ProxyServerM3u8 implements ProxyServer {
             //将数据转换为String
             String responseStr = ToolString.convertStreamToStr(inputStream, "utf-8");
 
+
+            //不是直播的情况才缓存，是直播的话，这个文件会一直更新，我们不能缓存
+            if (!ToolString.isLive(responseStr)) {
+                //保存
+                ToolSDcard.writeStringSdcard(getUrlDicotry(), getM3u8FileName(), responseStr);
+                //写入header
+                ToolSDcard.writeObjectSdcard(getUrlDicotry(), getM3u8HeadName(), responesMaps);
+            }
+
             //所有的paths进入代理流程
             responseStr = initPaths(requestMaps, responseStr);
 
@@ -232,14 +257,6 @@ public class ProxyServerM3u8 implements ProxyServer {
             List<String> datas = new ArrayList<>();
             datas.add(Long.toString(bytes.length));
             responesMaps.put("Content-Length", datas);
-
-            //不是直播的情况才缓存，是直播的话，这个文件会一直更新，我们不能缓存
-            if (!ToolString.isLive(responseStr)) {
-                //保存
-                ToolSDcard.writeStringSdcard(getUrlDicotry(), getM3u8FileName(), responseStr);
-                //写入header
-                ToolSDcard.writeObjectSdcard(getUrlDicotry(), getM3u8HeadName(), responesMaps);
-            }
 
             //返回真实数据
             response.getHeaders().addAll(responesMaps);
