@@ -84,7 +84,7 @@ public class DownLoadActor {
     public int actorTag = 0;
 
     //检查
-    private boolean fileCheck = false;
+    private boolean fileCheck = true;
 
     //头部需要放入的信息
     private HashMap<String, String> headerMap = new HashMap<>();
