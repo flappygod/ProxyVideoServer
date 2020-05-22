@@ -34,5 +34,4 @@ public interface ProxyServer {
     //停止缓存
     void stopCache();
 
-
 }
