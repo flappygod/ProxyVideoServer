@@ -225,10 +225,8 @@ public class ProxyServerM3u8 implements ProxyServer {
                 //写入header
                 ToolSDcard.writeObjectSdcard(getUrlDicotry(), getM3u8HeadName(), responesMaps);
             }
-
             //所有的paths进入代理流程
             String responseProxStr = initPaths(requestMaps, responseStr);
-
 
             //获取bytes
             byte[] bytes = responseStr.getBytes();
@@ -245,7 +243,6 @@ public class ProxyServerM3u8 implements ProxyServer {
 
             //返回真实数据
             response.getHeaders().addAll(responesMaps);
-
 
             //写入数据
             ByteBufferList bufferList = new ByteBufferList(responseProxStr.getBytes());
