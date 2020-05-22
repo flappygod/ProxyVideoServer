@@ -6,7 +6,6 @@ import com.flappygo.proxyserver.Interface.ProxyServer;
 import com.flappygo.proxyserver.ProxyServer.ServerProxy;
 import com.flappygo.proxyserver.ProxyServer.Serverm3u8.Request.M3u8RequestCached;
 import com.flappygo.proxyserver.ProxyServer.Serverm3u8.Request.M3u8RequestNetwork;
-import com.koushikdutta.async.http.AsyncHttpGet;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.koushikdutta.async.http.server.HttpServerRequestCallback;
