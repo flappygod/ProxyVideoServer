@@ -508,8 +508,7 @@ public class ProxyServerM3u8 implements ProxyServer {
     //获取实际的保存地址
     @Override
     public String getUrlDicotry() {
-        String uuid = ServerIDManager.getInstance(context).getUrlVideoID(urlPath);
-        return ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
+        return ServerPathManager.getInstance(context).getDefaultCachePath(urlVideoID);
     }
 
     //获取

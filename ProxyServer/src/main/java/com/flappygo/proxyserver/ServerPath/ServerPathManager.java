@@ -54,8 +54,8 @@ public class ServerPathManager {
 
 
     //获取默认的UUID缓存地址
-    public String getDefaultCachePath(String uuid) {
-        return getDefaultDirPath() + uuid + "/";
+    public String getDefaultCachePath(String videoID) {
+        return getDefaultDirPath() + videoID + "/";
     }
 
 
