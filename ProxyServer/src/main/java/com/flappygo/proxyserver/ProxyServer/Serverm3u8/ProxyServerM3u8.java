@@ -546,7 +546,7 @@ public class ProxyServerM3u8 implements ProxyServer {
     public void startCache(ProxyCacheListener listener) {
 
         //完成下载的文件
-        DownloadDoneModel model = (DownloadDoneModel) ToolSDcard.getObjectSdcard(getUrlDicotry(), actionID + "done.data");
+        DownloadDoneModel model = (DownloadDoneModel) ToolSDcard.getObjectSdcard(getUrlDicotry(), urlVideoID + "done.data");
 
         //如果已经存在了
         if (model != null) {
