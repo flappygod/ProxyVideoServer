@@ -593,7 +593,7 @@ public class ProxyServerHttp implements ProxyServer {
                     DownloadDoneModel downloadDoneModel = new DownloadDoneModel();
                     //设置url地址
                     downloadDoneModel.setUrl(urlPath);
-                    //设置actionID
+                    //设置urlVideoID
                     downloadDoneModel.setVideoID(urlVideoID);
                     //缓存完成
                     downloadDoneModel.setTotalSegment(segments.size());
