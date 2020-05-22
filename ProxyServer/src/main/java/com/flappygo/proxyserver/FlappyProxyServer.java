@@ -69,8 +69,8 @@ public class FlappyProxyServer {
             //检查SDCARD
             checkSDCard();
 
-            //获取这个URL所对应的UUID
-            String uuid = ServerIDManager.getInstance(context).generateUrlID(url);
+            //获取这个URL所对应的actionID
+            String actionID = ServerIDManager.getInstance(context).generateUrlID(url) + (unique == null ? "" : unique);
 
             //新增被代理的URL
             ServerIDManager.getInstance(context).addUrl(url);
@@ -80,24 +80,24 @@ public class FlappyProxyServer {
 
             //如果当前已经存在服务对齐镜像
             if (runningServer != null) {
-                return getLocalServerUrl() + uuid;
+                return getLocalServerUrl() + actionID;
             }
 
             //如果是M3u8进入M3U8的处理方式
             if (url.toLowerCase().endsWith("m3u8")) {
                 //服务地址
-                ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), uuid, url);
+                ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), actionID, url);
                 //添加
-                addServer(uuid, server);
+                addServer(actionID, server);
                 //返回的实际请求地址
-                return getLocalServerUrl() + uuid;
+                return getLocalServerUrl() + actionID;
             } else {
                 //服务地址
-                ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), uuid, url);
+                ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), actionID, url);
                 //添加
-                addServer(uuid, server);
+                addServer(actionID, server);
                 //返回的实际请求地址
-                return getLocalServerUrl() + uuid;
+                return getLocalServerUrl() + actionID;
             }
         }
     }
@@ -129,8 +129,8 @@ public class FlappyProxyServer {
             //检查SDCARD
             checkSDCard();
 
-            //获取这个URL所对应的UUID
-            String uuid = ServerIDManager.getInstance(context).generateUrlID(url);
+            //获取这个URL所对应的actionID
+            String actionID = ServerIDManager.getInstance(context).generateUrlID(url);
 
             //新增被代理的URL
             ServerIDManager.getInstance(context).addUrl(url);
@@ -143,31 +143,32 @@ public class FlappyProxyServer {
                 //开始缓存
                 runningServer.startCache(listener);
                 //开始
-                return getLocalServerUrl() + uuid;
+                return getLocalServerUrl() + actionID;
             }
 
             //如果是M3u8进入M3U8的处理方式
             if (url.toLowerCase().endsWith("m3u8")) {
                 //服务地址
-                ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), uuid, url);
+                ProxyServerM3u8 server = new ProxyServerM3u8(context.getApplicationContext(), actionID, url);
                 //开始缓存
                 server.startCache(listener);
                 //添加
-                addServer(uuid, server);
+                addServer(actionID, server);
                 //返回的实际请求地址
-                return getLocalServerUrl() + uuid;
+                return getLocalServerUrl() + actionID;
             } else {
                 //服务地址
-                ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), uuid, url);
+                ProxyServerHttp server = new ProxyServerHttp(context.getApplicationContext(), actionID, url);
                 //开始缓存
                 server.startCache(listener);
                 //添加
-                addServer(uuid, server);
+                addServer(actionID, server);
                 //返回的实际请求地址
-                return getLocalServerUrl() + uuid;
+                return getLocalServerUrl() + actionID;
             }
         }
     }
+
 
     //停止缓存
     public boolean proxyCacheStop(String url) {
@@ -190,11 +191,11 @@ public class FlappyProxyServer {
             return true;
         }
 
-        //获取这个URL所对应的UUID
-        String uuid = ServerIDManager.getInstance(context).generateUrlID(url);
+        //获取这个URL所对应的actionID
+        String actionID = ServerIDManager.getInstance(context).generateUrlID(url);
 
-        //获取UUID的缓存地址
-        final String path = ServerPathManager.getInstance(context).getDefaultCachePath(uuid);
+        //获取actionID的缓存地址
+        final String path = ServerPathManager.getInstance(context).getDefaultCachePath(actionID);
 
         //移除
         ServerIDManager.getInstance(context).removeUrl(url);
@@ -262,15 +263,15 @@ public class FlappyProxyServer {
         //遍历
         while (iterator.hasNext()) {
             //遍历
-            String key = (String) iterator.next();
+            String actionID = (String) iterator.next();
             //获取代理服务
-            ProxyServer server = proxyServer.get(key);
+            ProxyServer server = proxyServer.get(actionID);
             //如果相等
-            if (server.getUrl().equals(url)) {
+            if (server.getUrl().equals(url) && (unique == null || actionID.endsWith(unique))) {
                 //停止
                 server.stopServer();
                 //移除
-                proxyServer.remove(key);
+                proxyServer.remove(actionID);
                 //返回成功
                 return true;
             }

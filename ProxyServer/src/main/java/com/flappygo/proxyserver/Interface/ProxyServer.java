@@ -10,8 +10,8 @@ public interface ProxyServer {
     //获取远程服务的地址
     String getUrl();
 
-    //获取当前服务的UUID
-    String getUrlUUID();
+    //获取当前服务的actionID
+    String getUrlactionID();
 
     //获取保存的目录
     String getUrlDicotry();

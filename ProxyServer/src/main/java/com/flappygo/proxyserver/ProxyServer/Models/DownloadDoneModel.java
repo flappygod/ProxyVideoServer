@@ -9,18 +9,18 @@ public class DownloadDoneModel implements Serializable {
     private static final long serialVersionUID = 8137497282037389685L;
 
     //当前的uuid
-    private String uuid;
+    private String actionID;
     //当前的url
     private String url;
     //当前的segment总数
     private long totalSegment;
 
-    public String getUuid() {
-        return uuid;
+    public String getActionID() {
+        return actionID;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setActionID(String actionID) {
+        this.actionID = actionID;
     }
 
     public String getUrl() {
