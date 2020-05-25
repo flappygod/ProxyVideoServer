@@ -36,6 +36,22 @@ public class ServerProxy extends AsyncHttpServer {
         return instance;
     }
 
+    //重置
+    public void reset() {
+
+        synchronized (ServerProxy.class) {
+            //停止之前的所有服务
+            if (instance != null) {
+                instance.stop();
+                instance = null;
+            }
+            //开启新的服务
+            instance = new ServerProxy();
+            //监听
+            instance.listen(AsyncServer.getDefault(), ServerConfig.PORT);
+        }
+    }
+
 
     //添加子类
     public void addVideoChildProxy(String trueAction, HttpServerRequestCallback serverRequestCallback) {

@@ -2,6 +2,7 @@ package com.flappygo.proxyserver;
 
 
 import com.flappygo.proxyserver.ProxyServer.ServerHttp.ProxyServerHttp;
+import com.flappygo.proxyserver.ProxyServer.ServerProxy;
 import com.flappygo.proxyserver.ProxyServer.Serverm3u8.ProxyServerM3u8;
 import com.flappygo.proxyserver.Interface.ProxyCacheListener;
 import com.flappygo.proxyserver.ServerPath.ServerPathManager;
@@ -51,6 +52,7 @@ public class FlappyProxyServer {
     public static void init(int port, int poolsize) {
         ServerConfig.PORT = port;
         ServerConfig.THREAD_POOL_SIZE = poolsize;
+        ServerProxy.getInstance().reset();
     }
 
     //获取本地服务器的地址
