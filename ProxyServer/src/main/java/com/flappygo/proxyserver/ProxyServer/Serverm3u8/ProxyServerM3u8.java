@@ -559,7 +559,7 @@ public class ProxyServerM3u8 implements ProxyServer {
 
     //停止服务器
     @Override
-    public void stopServer() {
+    public void stop() {
         //如果还没有停止
         if (isStoped == false) {
             //停止

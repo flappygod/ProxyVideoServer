@@ -274,7 +274,7 @@ public class FlappyProxyServer {
                 //获取代理服务
                 ProxyServer server = proxyServer.get(actionID);
                 //停止
-                server.stopServer();
+                server.stop();
                 //移除
                 proxyServer.remove(actionID);
                 //返回成功

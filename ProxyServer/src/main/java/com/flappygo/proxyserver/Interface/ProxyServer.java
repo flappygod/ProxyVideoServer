@@ -23,7 +23,7 @@ public interface ProxyServer {
     void setPlayingSegmentPosition(int postion);
 
     //停止服务
-    void stopServer();
+    void stop();
 
     //当前是否停止
     boolean isStoped();
