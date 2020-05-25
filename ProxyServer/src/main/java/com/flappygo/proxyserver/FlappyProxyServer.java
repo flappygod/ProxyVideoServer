@@ -85,7 +85,7 @@ public class FlappyProxyServer {
             ServerIDManager.getInstance(context).addUrl(url);
 
             //获取当前正在运行的服务
-            ProxyServer runningServer = getRunningServer(url);
+            ProxyServer runningServer = getRunningServer(actionID);
 
             //如果当前已经存在服务对齐镜像
             if (runningServer != null) {
@@ -147,7 +147,7 @@ public class FlappyProxyServer {
             ServerIDManager.getInstance(context).addUrl(url);
 
             //获取当前正在运行的服务
-            ProxyServer runningServer = getRunningServer(url);
+            ProxyServer runningServer = getRunningServer(actionID);
 
             //如果当前已经存在服务对齐镜像
             if (runningServer != null) {
@@ -247,7 +247,7 @@ public class FlappyProxyServer {
 
 
     //获取当前正在runnin的服务
-    private ProxyServer getRunningServer(String url) {
+    private ProxyServer getRunningServer(String actionID) {
 
         Iterator iterator = proxyServer.keySet().iterator();
         //遍历
@@ -256,8 +256,8 @@ public class FlappyProxyServer {
             String key = (String) iterator.next();
             //获取服务
             ProxyServer server = proxyServer.get(key);
-            //如果已经存在
-            if (server.getUrl().equals(url)) {
+            //如果相等
+            if(key.equals(actionID)){
                 return server;
             }
         }
