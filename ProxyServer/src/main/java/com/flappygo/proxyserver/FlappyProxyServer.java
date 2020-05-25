@@ -47,6 +47,12 @@ public class FlappyProxyServer {
         return instance;
     }
 
+    //进行初始化
+    public static void init(int port, int poolsize) {
+        ServerConfig.PORT = port;
+        ServerConfig.THREAD_POOL_SIZE = poolsize;
+    }
+
     //获取本地服务器的地址
     public static String getLocalServerUrl() {
         return "http://127.0.0.1:" + ServerConfig.PORT + "/";
