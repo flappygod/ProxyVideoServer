@@ -731,14 +731,16 @@ public class ProxyServerHttp implements ProxyServer {
         //如果已经存在了
         if (model != null) {
             //已经缓存完成了
-            listener.cachedSuccess();
+            if (listener != null)
+                listener.cachedSuccess();
             //返回
             return;
         }
 
         //添加监听
         synchronized (cacheListeners) {
-            cacheListeners.add(listener);
+            if (listener != null)
+                cacheListeners.add(listener);
         }
 
         //如果当前的所有的线程为零
