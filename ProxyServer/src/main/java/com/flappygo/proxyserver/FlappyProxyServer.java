@@ -52,10 +52,6 @@ public class FlappyProxyServer {
         return "http://127.0.0.1:" + ServerConfig.PORT + "/";
     }
 
-    //获取URl
-    private String getUrlUniqueActionID(String url, String unique) {
-        return ServerIDManager.getInstance(context).getUrlVideoID(url) + (unique == null ? "" : unique);
-    }
 
     //代理地址
     public String proxyStart(String url, String unique) {
@@ -75,7 +71,7 @@ public class FlappyProxyServer {
             checkSDCard();
 
             //获取这个URL所对应的actionID
-            String actionID = getUrlUniqueActionID(url, unique);
+            String actionID = ServerIDManager.getInstance(context).getUrlActionID(url, unique);
 
             //新增被代理的URL
             ServerIDManager.getInstance(context).addUrl(url);
@@ -111,7 +107,7 @@ public class FlappyProxyServer {
     //停止代理
     public boolean proxyStop(String url, String unique) {
 
-        String actionID = getUrlUniqueActionID(url, unique);
+        String actionID = ServerIDManager.getInstance(context).getUrlActionID(url, unique);
         //地址
         synchronized (this) {
             removeServer(actionID);
@@ -137,7 +133,7 @@ public class FlappyProxyServer {
             checkSDCard();
 
             //获取这个URL所对应的actionID
-            String actionID = getUrlUniqueActionID(url, null);
+            String actionID = ServerIDManager.getInstance(context).getUrlActionID(url, null);
 
             //新增被代理的URL
             ServerIDManager.getInstance(context).addUrl(url);
@@ -180,7 +176,7 @@ public class FlappyProxyServer {
     //停止缓存
     public boolean proxyCacheStop(String url) {
         //取得actionID
-        String actionID = getUrlUniqueActionID(url, null);
+        String actionID = ServerIDManager.getInstance(context).getUrlActionID(url, null);
         //地址
         synchronized (this) {
             removeServer(actionID);

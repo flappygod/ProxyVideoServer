@@ -65,6 +65,11 @@ public class ServerIDManager {
         return ret;
     }
 
+    //胃一直
+    public String getUrlActionID(String url, String unique) {
+        return getUrlVideoID(url) + (unique == null ? "" : unique);
+    }
+
     //获取列表
     public List<String> getUrls() {
         synchronized (this) {
