@@ -118,9 +118,8 @@ public class FlappyProxyServer {
         String actionID = ServerIDManager.getInstance(context).getUrlActionID(url, unique);
         //地址
         synchronized (this) {
-            removeServer(actionID);
+            return removeServer(actionID);
         }
-        return false;
     }
 
     //缓存
@@ -187,9 +186,8 @@ public class FlappyProxyServer {
         String actionID = ServerIDManager.getInstance(context).getUrlActionID(url, null);
         //地址
         synchronized (this) {
-            removeServer(actionID);
+            return removeServer(actionID);
         }
-        return false;
     }
 
     //清理当前的Proxy
